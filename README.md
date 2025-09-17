@@ -135,186 +135,252 @@ This project implements an intelligent AI agent that **reasons, plans, and execu
 
 ## 📁 Project Deliverables
 
-### 1. Source Code
+# 1. Source Code
 - Complete implementation of the AI agent system
 - Multi-agent collaboration framework
 - Fine-tuned model integration
 - Evaluation and testing modules
 
-### 2. AI Agent Architecture Document
-- **Components:** The architecture consists of a network of specialized agents, each responsible for a specific task. This approach is more effective for handling complex, multi-step workflows than a single, monolithic agent.
+# 2. AI Agent Architecture Document
 
-User Interface (UI) Agent: This component serves as the initial point of contact, receiving research requests from the user. It can be implemented as a web dashboard, desktop app, or command-line tool.
+## Components
 
-Research Planner Agent: Acting as the orchestrator, this agent receives the user's request, analyzes the requirements, and creates a high-level research strategy. It then breaks down the task into subtasks and assigns them to other specialized agents. This agent embodies the Reasoning and Planning phases of the agent's loop.
+The architecture consists of a network of specialized agents, each responsible for a specific task. This approach is more effective for handling complex, multi-step workflows than a single, monolithic agent.
 
-Document Processor Agent: This agent handles the technical task of processing academic papers. Its responsibilities include parsing PDF documents, extracting text, tables, and figures, and performing Optical Character Recognition (OCR) on non-text elements.
+* **User Interface (UI) Agent**:
+  Serves as the initial point of contact, receiving research requests from the user. It can be implemented as a web dashboard, desktop app, or command-line tool.
 
-Summary Generator Agent: A specialized agent that receives extracted information and synthesizes it to create concise and comprehensive summaries. It leverages the fine-tuned model for domain-specific understanding.
+* **Research Planner Agent**:
+  Acts as the orchestrator, receiving the user's request, analyzing the requirements, and creating a high-level research strategy. It then breaks down the task into subtasks and assigns them to other specialized agents. This agent embodies the *Reasoning* and *Planning* phases of the agent's loop.
 
-Citation Manager Agent: This agent is responsible for extracting and managing citations and references from the processed documents. It ensures that all sources are correctly formatted according to user-specified styles (e.g., APA, MLA).
+* **Document Processor Agent**:
+  Handles the technical task of processing academic papers. Responsibilities include parsing PDF documents, extracting text, tables, and figures, and performing OCR on non-text elements.
 
-Quality Validator Agent: The final agent in the loop, responsible for reviewing the outputs from the other agents. It checks for accuracy, completeness, and coherence, providing a layer of quality assurance.
+* **Summary Generator Agent**:
+  Receives extracted information and synthesizes it to create concise and comprehensive summaries. It leverages the fine-tuned model for domain-specific understanding.
 
-External Tools & Knowledge Base: These are not agents but critical components. This includes a vector database for Retrieval-Augmented Generation (RAG) and connectors to external research databases like PubMed or arXiv. They are the resources the agents use for Execution.
+* **Citation Manager Agent**:
+  Extracts and manages citations and references from processed documents. Ensures all sources are correctly formatted according to user-specified styles (e.g., APA, MLA).
 
+* **Quality Validator Agent**:
+  Reviews the outputs from the other agents, checking for accuracy, completeness, and coherence. Provides a layer of quality assurance.
 
-- **Interaction Flow:** The system operates in a cyclical "Reason, Plan, and Execute" loop.
+* **External Tools & Knowledge Base**:
+  Not agents, but critical components. Includes a vector database for Retrieval-Augmented Generation (RAG) and connectors to external research databases like PubMed or arXiv. These are resources agents use for *Execution*.
 
-Request Initiation: The user submits a research query through the UI.
+---
 
-Reasoning & Planning: The Research Planner Agent analyzes the request and develops a step-by-step plan. It determines which documents to retrieve from the knowledge base or external tools and which agents should handle each task (e.g., document processing, summarization, citation management).
+## Interaction Flow
 
-Execution: The Research Planner Agent dispatches subtasks to the appropriate specialized agents.
+The system operates in a cyclical **"Reason, Plan, and Execute"** loop:
 
-The Document Processor Agent retrieves and processes the papers.
+1. **Request Initiation**: The user submits a research query through the UI.
+2. **Reasoning & Planning**: The Research Planner Agent analyzes the request and develops a step-by-step plan. It determines which documents to retrieve and which agents should handle each task.
+3. **Execution**:
 
-The Summary Generator Agent creates summaries.
+   * The Research Planner Agent dispatches subtasks.
+   * The Document Processor Agent retrieves and processes papers.
+   * The Summary Generator Agent creates summaries.
+   * The Citation Manager Agent formats references.
+4. **Validation**: The Quality Validator Agent reviews outputs to ensure accuracy and quality.
+5. **Final Output**: The validated results — summary, key insights, and citations — are compiled and presented to the user via the UI.
 
-The Citation Manager Agent formats the references.
+---
 
-Validation: The Quality Validator Agent reviews all outputs to ensure they meet the defined accuracy and quality standards.
+## Models Used
 
-Final Output: The validated results, including the summary, key insights, and citations, are compiled and presented to the user through the UI.
+* **LLM**: *LoRA Fine-tuned Llama-3.1-8B*
 
-- **Models Used:** LLM: LoRA Fine-tuned Llama-3.1-8B.
+  * The base Llama-3.1-8B model is a powerful general-purpose LLM.
+  * Fine-tuning with LoRA provides:
 
-Reasoning: The base Llama-3.1-8B model is a powerful general-purpose LLM, and fine-tuning it with LoRA provides two key benefits. First, it specializes the model in the domain of academic text, improving its understanding of complex scientific language and terminology. Second, the Parameter-Efficient Fine-tuning (PEFT) method LoRA makes the model more memory and computationally efficient.
+    * Specialization for academic text.
+    * Efficiency through Parameter-Efficient Fine-tuning (PEFT).
 
-Agent Framework: LangGraph.
+---
 
-Reasoning: LangGraph is an ideal choice for orchestrating multi-agent systems because it allows you to model agent interactions as a state machine. This makes it easy to define the precise flow of information and control the collaboration between the different agents in the system. It provides a robust, production-ready framework for managing complex agent workflows.
+## Agent Framework
 
-Retrieval System: Vector Database (FAISS)
+* **LangGraph**
 
-Reasoning: Integrating a vector database with RAG is more advantageous than traditional fine-tuning alone for certain knowledge-intensive tasks, as it can access a broader, more up-to-date corpus of information without retraining. FAISS is a strong choice due to its speed and efficiency in searching large datasets of vectors.
+  * Ideal for orchestrating multi-agent systems.
+  * Models interactions as a state machine, defining precise flows of information.
+  * Provides a robust, production-ready framework for complex workflows.
 
-- **Design Choices:** Multi-agent System: We chose a multi-agent system over a single, large agent to improve modularity, scalability, and reliability. By delegating specialized tasks to different agents, the system becomes more resilient and easier to maintain. For example, if the Citation Manager Agent fails, the rest of the system can still function, unlike a monolithic design where a single point of failure can halt the entire process. This collaborative approach also mimics a human team, with each member having a specific expertise.
+---
 
-Fine-tuning over General-Purpose LLM: While a general LLM could handle the tasks, a fine-tuned model offers improved reliability, task specialization, and an adapted style tailored for academic writing. This ensures the generated outputs are not only accurate but also formatted and toned appropriately for academic use.
+## Retrieval System
 
-RAG Integration: The RAG system provides up-to-date knowledge and reduces the risk of hallucination by grounding the agent's responses in specific, verifiable sources. It complements the fine-tuned model, providing both a deeper domain understanding and a broader, verifiable knowledge base.
+* **Vector Database: FAISS**
 
-### 3. Data Science Report
-- **Fine-tuning Setup:** The core of our AI agent's performance relies on a fine-tuned model specifically optimized for academic text processing.
+  * Integrated with RAG for broader, up-to-date knowledge.
+  * Faster and more efficient than traditional fine-tuning for large datasets.
 
-Model Selection: We chose Llama-3.1-8B as the base model due to its strong performance and general-purpose capabilities.
+---
 
-Methodology: We employed Parameter-Efficient Fine-tuning (PEFT), specifically the LoRA (Low-Rank Adaptation) method. This technique is highly efficient, reducing memory usage and computational costs while still adapting the model effectively to our specific domain. LoRA works by freezing the pre-trained model weights and injecting new, trainable low-rank matrices into the transformer layers, which makes the model more memory-efficient.
+## Design Choices
 
-Training Data: The model was fine-tuned on a custom dataset of over 10,000 academic papers. The data was sourced from multiple reputable academic databases, including arXiv, PubMed, and IEEE. The dataset was carefully prepared to include a variety of tasks such as summarization, key insight extraction, and citation parsing, which are crucial for the agent's functionality.
+* **Multi-agent System**:
 
-Results: The fine-tuning process was successful, demonstrating significant improvements over the base model.
+  * Improves modularity, scalability, and reliability.
+  * Specialized tasks make the system resilient (e.g., failure of one agent doesn’t halt the system).
+  * Mimics a human team, with each member having specific expertise.
 
-Training Loss: The training loss decreased from 2.34 to 0.89, indicating that the model effectively learned the patterns of academic text.
+* **Fine-tuning over General-Purpose LLM**:
 
-Validation Accuracy: The model achieved a 94.2% validation accuracy on academic text-specific tasks, such as correct information extraction and summarization.
+  * Fine-tuned models improve reliability, specialization, and academic tone.
+  * Outputs are more accurate and appropriately formatted.
 
-Inference Speed: The fine-tuned model demonstrated an inference speed that was 2.3x faster than the base model, which is a direct benefit of the LoRA method.
+* **RAG Integration**:
 
-Memory Efficiency: We observed a 40% reduction in GPU memory usage during inference, making the model more feasible for deployment on consumer-grade hardware.
-- **Evaluation Methodology:** Data Science Report
+  * Provides up-to-date knowledge.
+  * Grounds responses in verifiable sources.
+  * Complements fine-tuned models by balancing deep domain understanding with broader knowledge.
+
+# 3. Data Science Report
+
 This report details the fine-tuning process and evaluation methodology for the AI Agent Prototype.
 
-1. Fine-tuning Setup
+---
+
+## Fine-tuning Setup
+
 The core of our AI agent's performance relies on a fine-tuned model specifically optimized for academic text processing.
 
-Model Selection: We chose Llama-3.1-8B as the base model due to its strong performance and general-purpose capabilities.
+### Model Selection
 
-Methodology: We employed Parameter-Efficient Fine-tuning (PEFT), specifically the LoRA (Low-Rank Adaptation) method. This technique is highly efficient, reducing memory usage and computational costs while still adapting the model effectively to our specific domain. LoRA works by freezing the pre-trained model weights and injecting new, trainable low-rank matrices into the transformer layers, which makes the model more memory-efficient.
+We chose **Llama-3.1-8B** as the base model due to its strong performance and general-purpose capabilities.
 
-Training Data: The model was fine-tuned on a custom dataset of over 10,000 academic papers. The data was sourced from multiple reputable academic databases, including arXiv, PubMed, and IEEE. The dataset was carefully prepared to include a variety of tasks such as summarization, key insight extraction, and citation parsing, which are crucial for the agent's functionality.
+### Methodology
 
-Results: The fine-tuning process was successful, demonstrating significant improvements over the base model.
+We employed **Parameter-Efficient Fine-tuning (PEFT)**, specifically the **LoRA (Low-Rank Adaptation)** method.
 
-Training Loss: The training loss decreased from 2.34 to 0.89, indicating that the model effectively learned the patterns of academic text.
+* LoRA is highly efficient, reducing memory usage and computational costs while adapting the model to our specific domain.
+* It works by freezing the pre-trained model weights and injecting new, trainable low-rank matrices into the transformer layers, making the model more memory-efficient.
 
-Validation Accuracy: The model achieved a 94.2% validation accuracy on academic text-specific tasks, such as correct information extraction and summarization.
+### Training Data
 
-Inference Speed: The fine-tuned model demonstrated an inference speed that was 2.3x faster than the base model, which is a direct benefit of the LoRA method.
+* Custom dataset of **10,000+ academic papers**.
+* Sources: *arXiv, PubMed, IEEE*.
+* Dataset included tasks such as summarization, key insight extraction, and citation parsing — all crucial for the agent's functionality.
 
-Memory Efficiency: We observed a 40% reduction in GPU memory usage during inference, making the model more feasible for deployment on consumer-grade hardware.
+---
 
-2. Evaluation Methodology and Outcomes
-Evaluation was conducted using both quantitative metrics to measure performance and qualitative analysis to assess user experience and output quality.
+## Results
 
-Quantitative Metrics:
+* **Training Loss**: Decreased from `2.34 → 0.89`, showing the model effectively learned academic text patterns.
+* **Validation Accuracy**: Achieved **94.2%** on academic text-specific tasks like information extraction and summarization.
+* **Inference Speed**: Model ran **2.3x faster** than the base model, a direct benefit of LoRA.
+* **Memory Efficiency**: **40% reduction** in GPU memory usage during inference, enabling deployment on consumer-grade hardware.
 
-Accuracy (94.2%): We used a test set of 50 research papers to measure the agent's accuracy in extracting key information, such as methodology, results, and conclusions.
+---
 
-Completeness (96.8%): This metric was calculated by comparing the agent-generated summaries against a human-generated "golden" summary to ensure all key points were captured.
+## Evaluation Methodology and Outcomes
 
-Relevance (92.1%): The agent’s ability to generate relevant content that addresses the original query was measured using a scoring rubric.
+Evaluation combined **quantitative metrics** for measurable performance and **qualitative analysis** for user experience and output quality.
 
-Citation Accuracy (98.5%): We tested the agent's ability to correctly parse and format citations, which is critical for academic integrity and avoiding plagiarism.
+### Quantitative Metrics
 
-Processing Speed (3.2x faster): This was benchmarked by comparing the time it took for the agent to process a batch of papers against the average time a human would take. The agent consistently performed the task 3.2 times faster than manual research.
+* **Accuracy (94.2%)**: Measured on 50 research papers for extracting key details (methodology, results, conclusions).
+* **Completeness (96.8%)**: Compared agent-generated summaries against human-generated “golden” summaries.
+* **Relevance (92.1%)**: Scored based on how well outputs addressed the original query.
+* **Citation Accuracy (98.5%)**: Tested correctness of citation parsing and formatting for academic integrity.
+* **Processing Speed (3.2x faster)**: Benchmarked against average human research time; consistently outperformed manual review.
 
-### 4. Interaction Logs
-Interaction Logs
-These logs demonstrate the agent's thought process and execution flow for a sample research task. The logs showcase the agent's ability to reason, plan, and execute by breaking down a complex request into a series of manageable subtasks.
+---
 
-1. Prompts Used
+# 4. Interaction Logs
+
+These logs demonstrate the agent's thought process and execution flow for a sample research task. They showcase the agent's ability to **reason, plan, and execute** by breaking down a complex request into manageable subtasks.
+
+---
+
+## Prompts Used
+
 The following prompts were used to test the AI agent's capabilities. Each prompt represents a user's request for academic research assistance.
 
-Prompt 1 (P1): "Please find and summarize recent research on the use of large language models (LLMs) in multi-agent systems. The summary should focus on collaboration patterns and key challenges. Include formatted citations."
+* **Prompt 1 (P1)**:
+  *"Please find and summarize recent research on the use of large language models (LLMs) in multi-agent systems. The summary should focus on collaboration patterns and key challenges. Include formatted citations."*
 
-Prompt 2 (P2): "Extract the methodology section from the paper 'A Survey of Multi-Agent Systems' and provide a brief overview. Also, locate a related paper on the 'Planner + Executor' design pattern."
+* **Prompt 2 (P2)**:
+  *"Extract the methodology section from the paper 'A Survey of Multi-Agent Systems' and provide a brief overview. Also, locate a related paper on the 'Planner + Executor' design pattern."*
 
-Prompt 3 (P3): "Generate an abstract for a paper on the fine-tuning of Llama models for domain-specific tasks. The abstract should be around 200 words and highlight the benefits of using LoRA."
+* **Prompt 3 (P3)**:
+  *"Generate an abstract for a paper on the fine-tuning of Llama models for domain-specific tasks. The abstract should be around 200 words and highlight the benefits of using LoRA."*
 
-2. Chat History and Agent's Decision Processes
-This log provides a detailed view of the agent's internal reasoning and actions in response to Prompt 1 (P1).
+---
 
-User: Please find and summarize recent research on the use of large language models (LLMs) in multi-agent systems. The summary should focus on collaboration patterns and key challenges. Include formatted citations.
+## Chat History and Agent's Decision Processes
 
-Agent's Internal Reasoning:
+**Prompt 1 (P1):**
+*User*: Please find and summarize recent research on the use of large language models (LLMs) in multi-agent systems. The summary should focus on collaboration patterns and key challenges. Include formatted citations.
 
-Reasoning: The user's request is a complex, multi-step task that requires planning and the use of multiple tools. The agent identifies the following sub-goals: 1) Retrieve relevant research papers, 2) Process and understand the content of the papers, 3) Synthesize a summary focusing on specific themes, and 4) Extract and format citations.
+### Agent's Internal Reasoning
 
-Planning: The agent creates a workflow using its multi-agent framework.
+* **Reasoning**:
 
-Task 1 (Information Retrieval): Activate the RAG system to query the vector database and external research tools (e.g., PubMed) for papers related to "LLMs in multi-agent systems," "collaboration patterns," and "challenges."
+  * Complex request requiring planning and multiple tools.
+  * Sub-goals:
 
-Task 2 (Document Processing): Assign the retrieved PDFs to the Document Processor Agent.
+    1. Retrieve relevant research papers.
+    2. Process and analyze content.
+    3. Synthesize summary (collaboration patterns & challenges).
+    4. Extract and format citations.
 
-Task 3 (Content Synthesis): Assign the extracted content to the Summary Generator Agent and provide instructions to focus on "collaboration patterns" and "key challenges."
+* **Planning**:
 
-Task 4 (Citation Management): Assign the processed documents and output to the Citation Manager Agent to extract and format references.
+  * Create workflow using the multi-agent framework.
 
-Task 5 (Quality Check): Have the Quality Validator Agent review the final summary and citations before presenting them to the user.
+### Workflow Breakdown
 
-Agent's Response:
+1. **Task 1 (Information Retrieval)**: Query RAG system for relevant papers.
+2. **Task 2 (Document Processing)**: Parse retrieved PDFs.
+3. **Task 3 (Content Synthesis)**: Generate a summary highlighting collaboration patterns & challenges.
+4. **Task 4 (Citation Management)**: Extract and format references.
+5. **Task 5 (Quality Check)**: Review final output for coherence and accuracy.
 
-"Understood. I have initiated a research query to find and analyze recent papers on LLMs in multi-agent systems. I will generate a summary focused on collaboration patterns and key challenges, including all relevant citations. I'll provide the final report shortly."
+---
 
-Agent Execution Log (Internal Process):
+## Agent Execution Log (Internal Process)
 
-[2025-09-17 08:40:05] Research Planner Agent: Dispatched search_papers task to the RAG system with query: "recent research LLM multi-agent systems collaboration patterns challenges"
-
-[2025-09-17 08:40:22] RAG System: Retrieved 5 relevant papers (e.g., 'A Survey of Multi-Agent Systems,' 'Building Effective Agents') and their vector embeddings.
-
+```
+[2025-09-17 08:40:05] Research Planner Agent: Dispatched search_papers task to RAG system with query: "recent research LLM multi-agent systems collaboration patterns challenges"
+[2025-09-17 08:40:22] RAG System: Retrieved 5 relevant papers (e.g., 'A Survey of Multi-Agent Systems,' 'Building Effective Agents') and vector embeddings.
 [2025-09-17 08:40:25] Research Planner Agent: Dispatched process_documents task to Document Processor Agent.
-
-[2025-09-17 08:41:10] Document Processor Agent: Successfully parsed all 5 PDFs, extracting text and figures.
-
-[2025-09-17 08:41:15] Research Planner Agent: Dispatched generate_summary task to Summary Generator Agent with instructions to use the fine-tuned LoRA model.
-
-[2025-09-17 08:42:01] Summary Generator Agent: Generated a draft summary based on the extracted content, highlighting collaboration patterns like "Planner + Executor" and challenges such as "scalability" and "trust".
-
+[2025-09-17 08:41:10] Document Processor Agent: Parsed all 5 PDFs, extracted text and figures.
+[2025-09-17 08:41:15] Research Planner Agent: Dispatched generate_summary task to Summary Generator Agent (using fine-tuned LoRA model).
+[2025-09-17 08:42:01] Summary Generator Agent: Drafted summary highlighting "Planner + Executor" collaboration and challenges like scalability & trust.
 [2025-09-17 08:42:05] Research Planner Agent: Dispatched format_citations task to Citation Manager Agent.
-
-[2025-09-17 08:42:15] Citation Manager Agent: Identified and formatted 8 citations from the source papers in APA style.
-
+[2025-09-17 08:42:15] Citation Manager Agent: Extracted & formatted 8 citations in APA style.
 [2025-09-17 08:42:18] Research Planner Agent: Dispatched review_output task to Quality Validator Agent.
-
-[2025-09-17 08:42:30] Quality Validator Agent: Verified that the summary is coherent, accurate, and that all citations are correctly formatted.
-
+[2025-09-17 08:42:30] Quality Validator Agent: Verified coherence, accuracy, and correct citations.
 [2025-09-17 08:42:32] Research Planner Agent: Finalized report and prepared to send to user.
+```
 
-Agent's Final Output to User:
+---
 
-"Here is a summary of recent research on LLMs in multi-agent systems, focusing on collaboration and challenges.
+## Agent's Final Output to User
+
+*"Here is a summary of recent research on LLMs in multi-agent systems, focusing on collaboration and challenges."*
+
+### Summary
+
+Recent advancements show that multi-agent systems are becoming more sophisticated by incorporating LLMs to improve their reasoning and planning capabilities. Collaborative patterns often seen in these systems include a **"Planner + Executor"** design, where a high-level agent breaks down tasks for specialized agents to execute. This design improves efficiency and resource allocation.
+
+Key challenges include ensuring seamless collaboration, managing communication complexity, and addressing **scalability** and **trust**. The integration of LLMs with external tools via **RAG** is also a common method for enhancing reliability and grounding responses in factual knowledge.
+
+---
+
+### References
+
+* *A Survey of Multi-Agent Systems.* Smith, J. et al. (2024).
+* *Building Effective Agents.* Anthropic Engineering. (2023).
+* *Agentic Design Patterns.* Johnson, A. et al. (2024).
+* *The Power of LoRA.* Brown, S. (2023).
+
+---
+
+*This report was generated using a fine-tuned LoRA model and a multi-agent framework.*
 
 Summary:
 
